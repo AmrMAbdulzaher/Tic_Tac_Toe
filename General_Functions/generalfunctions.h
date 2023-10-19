@@ -4,6 +4,9 @@
 #define clearBuffer() while(getchar() != '\n')
 #define POSTIONS_NUM 9
 
+void switchChoice(void);
+void welcomeScreen(void);
+void mainMenu(void);
 void chooseMode();
 void resetField(void);
 unsigned char isEnd(void);

@@ -4,14 +4,55 @@
 #include "../Multiplayer/multiplayer.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <string.h>
 #include <ctype.h>
 
 char field[3][3] = {{'1', '2', '3'},{'4', '5', '6'},{'7', '8', '9'}};
 char choice= 'X';
 unsigned char playCounter=0;
 static char winnerCharacter;
+unsigned char playerXCounter=0;
+unsigned char playerOCounter=0;
+char playerX[21]="You";
+char playerO[21]="Computer";
+char turnName[21];
+char titleText[33];
 
+void welcomeScreen(void)
+{
+	system(CLEAR);
+	drawFreePalestine();
+	pressEnter();
+	mainMenu();
+}
+void switchChoice(void)
+{
+	choice = (choice == 'X') ? 'O' : 'X';
+	if(strcmp(playerX,turnName) == 0)
+	{
+		strcpy(turnName,playerO);
+	}
+	else
+	{
+		strcpy(turnName,playerX);
+	}
+}
+void mainMenu(void)
+{
+	char input;
+	while(1)
+	{
+		printMainMenu();
+		scanf("%hhd",&input);
+		clearBuffer();
+		switch(input)
+		{
+			case 1: chooseMode(); break;
+			case 2: aboutMenu(); break;
+			case 3: exit(0);
+		}
+	}
+}
 void chooseMode(void)
 {
 	char input;
@@ -23,7 +64,12 @@ void chooseMode(void)
 		switch(input)
 		{
 			case 1: singlePlayerMode(); break;
-			case 2: multiPlayerMode(); break;
+			case 2:
+			{
+				strcpy(titleText,"        MultiPlayer Mode");
+				multiPlayerMode();
+				break;
+			}
 			case 3: return;
 			case 4: exit(0);
 		}
@@ -52,15 +98,23 @@ unsigned char isEnd(void)
 	unsigned char isEndState=1;
 	if('X' == winner)
 	{
-		printf("Player X is the winner.\n");
+		playerXCounter++;
+		showField();
+		printf("\t%s %s the winner.\n",playerX,strcmp(playerX,"You")==0?"are":"is");
+		printLine();
 	}
 	else if('O' == winner)
 	{
-		printf("Player O is the winner.\n");
+		playerOCounter++;
+		showField();
+		printf("\t%s is the winner.\n",playerO);
+		printLine();
+		
 	}
 	else if(POSTIONS_NUM == playCounter)
 	{
-		printf("Draw!\n");
+		printf("         \tDraw!\n");
+		printLine();
 	}
 	else
 	{
@@ -172,7 +226,7 @@ unsigned char isDone(void)
 	if(isEnd())
 	{
 		char inputChar;
-		printf("Enter [y] to Play Again: ");
+		printf("Enter [y] to Play Again or any key to Exit: ");
 		inputChar= getchar();
 		clearBuffer();
 		inputChar=tolower(inputChar);
@@ -188,6 +242,7 @@ void resetField(void)
 {
 	playCounter=0;
 	choice='X';
+	strcpy(turnName,playerX);
 	char num='1';
 	int i, j;
 	for (i = 0; i < 3; i++)

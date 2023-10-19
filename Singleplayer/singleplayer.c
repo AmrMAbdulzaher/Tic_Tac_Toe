@@ -4,11 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <ctype.h>
+#include <string.h>
 
 extern unsigned char playCounter;
-extern unsigned char playCounter;
-
+extern char titleText[33];
 extern char field[3][3];
 
 void singlePlayerMode(void)
@@ -21,9 +20,24 @@ void singlePlayerMode(void)
 		clearBuffer();
 		switch(input)
 		{
-			case 1: easyModeSP(); break;
-			case 2: normalModeSP(); break;
-			case 3: hardModeSP(); break;
+			case 1:
+			{
+				strcpy(titleText,"         Easy Mode - SP");
+				easyModeSP();
+				break;
+			}
+			case 2:
+			{
+				strcpy(titleText,"         Normal Mode - SP");
+				normalModeSP();
+				break;
+			}
+			case 3:
+			{
+				strcpy(titleText,"           Hard Mode - SP");
+				hardModeSP();
+				break;
+			}
 			case 4: return; break;
 			case 5: exit(0);
 		}
@@ -32,25 +46,25 @@ void singlePlayerMode(void)
 void inputSinglePlayer(void)
 {
 	playCounter++;
-	printf("Choose your position, Player X: ");
+	printf("Choose your position [X]: ");
 	userTurnInput();
 }
 
 void easyModeSP(void)
 {
-    showField("      Easy Mode - SP");
+    showField();
     while (1)
 	{
-		showField("      Easy Mode - SP");
+		showField();
 		//player move
         inputSinglePlayer();
-		showField("      Easy Mode - SP");
+		showField();
 		if(!isDone())
 		{
 			//computer random move
 			printf("Computer's turn...\n");
         	computerEasyMove();
-			showField("      Easy Mode - SP");
+			showField();
 			isDone();
 		}
     }
@@ -89,17 +103,17 @@ void computerEasyMove(void)
 
 void normalModeSP(void)
 {
-    showField("    Normal Mode - SP");
+    showField();
     while (1)
 	{
-    	showField("    Normal Mode - SP");
+    	showField();
         inputSinglePlayer();
-    	showField("    Normal Mode - SP");
+    	showField();
 		if(!isDone())
 		{
 			printf("Computer's turn...\n");
         	computerNormalMove();
-    		showField("    Normal Mode - SP");
+    		showField();
 			isDone();
 		}
     }
@@ -116,17 +130,17 @@ void computerNormalMove(void)
 }
 void hardModeSP(void)
 {
-    showField("    Hard Mode - SP");
+    showField();
     while (1)
 	{
-    	showField("    Hard Mode - SP");
+    	showField();
         inputSinglePlayer();
-    	showField("    Hard Mode - SP");
+    	showField();
 		if(!isDone())
 		{
 			printf("Computer's turn...\n");
         	computerHardMove();
-    		showField("      Hard Mode - SP");
+    		showField();
 			isDone();
 		}
     }
