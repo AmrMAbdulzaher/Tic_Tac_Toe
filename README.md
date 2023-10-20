@@ -14,8 +14,11 @@ This project is a classic implementation of the Tic-Tac-Toe game for the console
 - Keeps track of player scores
 
 ## How to Play
-
-Follow the on-screen instructions to navigate through the menus and start a game. Use the keyboard to select positions on the board and make your moves.
+Run game using the following command:  
+      
+    ./game.sh
+    
+Then follow the on-screen instructions to navigate through the menus and start a game. Use the keyboard to select positions on the board and make your moves.
 
 ## Modes
 ### Single-Player Mode
