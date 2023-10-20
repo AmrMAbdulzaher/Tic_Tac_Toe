@@ -42,14 +42,15 @@ void mainMenu(void)
 	char input;
 	while(1)
 	{
-		printMainMenu();
+		showMainMenu();
+		shiftTextLeft();
 		scanf("%hhd",&input);
 		clearBuffer();
 		switch(input)
 		{
 			case 1: chooseMode(); break;
 			case 2: aboutMenu(); break;
-			case 3: exit(0);
+			case 3: exitGame();
 		}
 	}
 }
@@ -58,20 +59,28 @@ void chooseMode(void)
 	char input;
 	while(1)
 	{
-		printModeMenu();
+		showModeMenu();
+		shiftTextLeft();
 		scanf("%hhd",&input);
 		clearBuffer();
-		switch(input)
+		if(1 == input)
 		{
-			case 1: singlePlayerMode(); break;
-			case 2:
-			{
-				strcpy(titleText,"        MultiPlayer Mode");
-				multiPlayerMode();
-				break;
-			}
-			case 3: return;
-			case 4: exit(0);
+			singlePlayerMode();
+			break;
+		}
+		else if(2== input)
+		{
+			strcpy(titleText,"           MultiPlayer Mode");
+			multiPlayerMode();
+			break;
+		}
+		else if(3==input)
+		{
+			return;
+		}
+		else if(4==input)
+		{
+			exitGame();
 		}
 	}
 }
@@ -80,7 +89,8 @@ void aboutMenu(void)
 	char input;
 	while(1)
 	{
-		printAboutMenu();
+		showAboutMenu();
+		shiftTextLeft();
 		scanf("%hhd",&input);
 		clearBuffer();
 		switch(input)
@@ -88,7 +98,100 @@ void aboutMenu(void)
 			case 1: printDescription(); break;
 			case 2: printDeveloper(); break;
 			case 3: return;
-			case 4: exit(0);
+			case 4: exitGame();
+		}
+	}
+}
+unsigned char userTurnInput(void)
+{
+	char position;
+	unsigned char state=1;
+	unsigned char scanReturn;
+	unsigned char row;
+	unsigned char col;
+	
+	while(1)
+	{
+		scanReturn= scanf("%hhd",&position);
+		clearBuffer();
+		row = (position - 1) / 3;
+		col = (position - 1) % 3;
+		if (isAvailablePosition)
+		{
+			field[row][col] = choice;
+			break;
+		}
+		else if(isUsedPosition)
+		{
+			printf("\t\t\t\t\t     Used Position! Choose another position: ");
+		}
+		else if(1 == scanReturn && 0 == position)
+		{
+			resetField();
+			strcpy(playerX,"You");
+			strcpy(playerO,"Computer");
+			state=0;
+			break;
+		}
+		else if(1 == scanReturn && -1 == position)
+		{
+			exit(0);
+		}
+		else
+		{
+			printf("\t\t\t\t\t     Invalid Position! Choose another position: ");
+		}
+	}
+	return state;
+}
+
+unsigned char getGameStat(void)
+{
+	unsigned char state=0;
+	if(isEnd())
+	{
+		char input;
+		while(1)
+		{
+			showWhatNext();
+			shiftTextLeft();
+			scanf("%hhd",&input);
+			clearBuffer();
+			if(1==input)
+			{
+				state=1;
+				resetField();
+				break;
+			}
+			else if(2==input)
+			{
+				state=2;
+				playerXCounter=0;
+				playerOCounter=0;
+				resetField();
+				break;
+			}
+			else if(3==input)
+			{
+				exitGame();
+			}
+		}
+	}
+	return state;
+}
+void resetField(void)
+{
+	playCounter=0;
+	choice='X';
+	strcpy(turnName,playerX);
+	char num='1';
+	int i, j;
+	for (i = 0; i < 3; i++)
+	{
+    	for (j = 0; j < 3; j++)
+		{
+      		field[i][j]=num;;
+			num++;
 		}
 	}
 }
@@ -100,26 +203,36 @@ unsigned char isEnd(void)
 	{
 		playerXCounter++;
 		showField();
-		printf("\t%s %s the winner.\n",playerX,strcmp(playerX,"You")==0?"are":"is");
+		textGreen_B();
+		printf("\t\t\t\t\t\t           %s %s the winner.\n",playerX,strcmp(playerX,"You")==0?"are":"is");
+		textReset();
 		printLine();
+		pressEnter();
 	}
 	else if('O' == winner)
 	{
 		playerOCounter++;
 		showField();
-		printf("\t%s is the winner.\n",playerO);
+		strcmp(playerX,"Computer")==0?textRed_B():textGreen_B();
+		printf("\t\t\t\t\t\t           %s is the winner.\n",playerO);
+		textReset();
 		printLine();
-		
+		pressEnter();
 	}
 	else if(POSTIONS_NUM == playCounter)
 	{
-		printf("         \tDraw!\n");
+		showField();
+		textNormal_B();
+		printf("\t\t\t\t\t\t             Draw!\n");
+		textReset();
 		printLine();
+		pressEnter();
 	}
 	else
 	{
 		isEndState=0;
 	}
+	
 	return isEndState;
 }
 char winnerChar(void)
@@ -172,132 +285,22 @@ unsigned char isWinDiags(void)
 	}
 	return isWinState;
 }
-void userTurnInput(void)
+void exitGame(void)
 {
-	char position;
-	unsigned char scanReturn;
-	unsigned char row;
-	unsigned char col;
-	scanReturn= scanf("%hhd",&position);
-	clearBuffer();
-	if (position >= 1 && position <= POSTIONS_NUM && scanReturn == 1)
+	char input=0;
+	while(1)
 	{
-		row = (position - 1) / 3;
-		col = (position - 1) % 3;
-		while(1)
+		showExitMenu();
+		shiftTextLeft();
+		scanf("%hhd",&input);
+		if(1==input)
 		{
-			if (field[row][col] == 'X' || field[row][col] == 'O')
-			{
-				printf("Used Position! Choose another position: ");
-				scanf("%hhd",&position);
-				clearBuffer();
-				row = (position - 1) / 3;
-				col = (position - 1) % 3;
-			}
-			else
-			{
-				break;
-			}
+			textReset();
+			exit(0);
 		}
-		field[row][col] = choice;
-	}
-	else
-	{
-		while(1)
+		else if(2==input)
 		{
-			printf("Invalid Position! Choose another position: ");
-			scanReturn= scanf("%hhd",&position);
-			clearBuffer();
-			if(position >= 1 && position <= POSTIONS_NUM && scanReturn == 1)
-			{
-				row = (position - 1) / 3;
-				col = (position - 1) % 3;
-				field[row][col] = choice;
-				break;
-			}
+			return;
 		}
 	}
-}
-
-
-unsigned char isDone(void)
-{
-	unsigned char state=0;
-	if(isEnd())
-	{
-		char inputChar;
-		printf("Enter [y] to Play Again or any key to Exit: ");
-		inputChar= getchar();
-		clearBuffer();
-		inputChar=tolower(inputChar);
-		switch(inputChar)
-		{
-			case 'y': resetField(); state=1; break;
-			default: exit(0);
-		}
-	}
-	return state;
-}
-void resetField(void)
-{
-	playCounter=0;
-	choice='X';
-	strcpy(turnName,playerX);
-	char num='1';
-	int i, j;
-	for (i = 0; i < 3; i++)
-	{
-    	for (j = 0; j < 3; j++)
-		{
-      		field[i][j]=num;;
-			num++;
-		}
-	}
-}
-
-unsigned char winMove(void)
-{
-	char temp;
-	//win if possible
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            if (field[i][j] != 'X' && field[i][j] != 'O')
-            {
-                temp = field[i][j];
-                field[i][j] = 'O';
-                if ('O' == winnerChar())
-                {
-                    return 1;
-                }
-                field[i][j] = temp;
-            }
-        }
-    }
-	
-	return 0;
-}
-unsigned char blockMove(void)
-{
-	char temp;
-	//block if possible
-	for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            if (field[i][j] != 'X' && field[i][j] != 'O')
-            {
-                temp = field[i][j];
-                field[i][j] = 'X';
-                if ('X' == winnerChar())
-                {
-                    field[i][j] = 'O';
-                    return 1;
-                }
-                field[i][j] = temp;
-            }
-        }
-    }
-	return 0;
 }

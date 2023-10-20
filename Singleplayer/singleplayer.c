@@ -15,57 +15,72 @@ void singlePlayerMode(void)
 	char input;
 	while(1)
 	{
-		printSPMenu();
+		showSPMenu();
+		shiftTextLeft();
 		scanf("%hhd",&input);
 		clearBuffer();
-		switch(input)
+		if(1 == input)
 		{
-			case 1:
-			{
-				strcpy(titleText,"         Easy Mode - SP");
-				easyModeSP();
-				break;
-			}
-			case 2:
-			{
-				strcpy(titleText,"         Normal Mode - SP");
-				normalModeSP();
-				break;
-			}
-			case 3:
-			{
-				strcpy(titleText,"           Hard Mode - SP");
-				hardModeSP();
-				break;
-			}
-			case 4: return; break;
-			case 5: exit(0);
+			strcpy(titleText,"            Easy Mode - SP");
+			easyModeSP();
+			break;
+		}
+		else if(2 == input)
+		{
+			strcpy(titleText,"           Normal Mode - SP");
+			normalModeSP();
+			break;
+		}
+		else if(3 == input)
+		{
+			strcpy(titleText,"            Hard Mode - SP");
+			hardModeSP();
+			break;
+		}
+		else if(4 == input)
+		{
+			return;
+		}
+		else if(5 == input)
+		{
+			exitGame();
 		}
 	}
 }
-void inputSinglePlayer(void)
+unsigned char inputSinglePlayer(void)
 {
+	unsigned char state=0;
 	playCounter++;
-	printf("Choose your position [X]: ");
-	userTurnInput();
+	printf("\t\t\t\t\t     Choose your position [X]: ");
+	if(!userTurnInput())
+	{
+		state=1;
+	}
+	return state;
 }
 
 void easyModeSP(void)
 {
-    showField();
+	char decisionState=0;
     while (1)
 	{
-		showField();
-		//player move
-        inputSinglePlayer();
-		showField();
-		if(!isDone())
+    	showField();
+		if(inputSinglePlayer())
 		{
-			//computer random move
-			printf("Computer's turn...\n");
+			return;
+		}
+    	showField();
+		decisionState= getGameStat();
+		if(2 == decisionState)
+		{
+			return;
+		}
+		else if(0 == decisionState)
+		{
+			printf("\t\t\t\t\t     Computer's turn...\n");
         	computerEasyMove();
-			showField();
-			isDone();
+    		showField();
+			getGameStat();
 		}
     }
 }
@@ -103,18 +118,23 @@ void computerEasyMove(void)
 
 void normalModeSP(void)
 {
-    showField();
+	char decisionState=0;
     while (1)
 	{
     	showField();
         inputSinglePlayer();
     	showField();
-		if(!isDone())
+		decisionState= getGameStat();
+		if(2 == decisionState)
 		{
-			printf("Computer's turn...\n");
+			return;
+		}
+		else if(0 == decisionState)
+		{
+			printf("\t\t\t\t\t     Computer's turn...\n");
         	computerNormalMove();
     		showField();
-			isDone();
+			getGameStat();
 		}
     }
 }
@@ -130,18 +150,23 @@ void computerNormalMove(void)
 }
 void hardModeSP(void)
 {
-    showField();
+	char decisionState=0;
     while (1)
 	{
     	showField();
         inputSinglePlayer();
     	showField();
-		if(!isDone())
+		decisionState= getGameStat();
+		if(2 == decisionState)
 		{
-			printf("Computer's turn...\n");
+			return;
+		}
+		else if(0 == decisionState)
+		{
+			printf("\t\t\t\t\t     Computer's turn...\n");
         	computerHardMove();
     		showField();
-			isDone();
+			getGameStat();
 		}
     }
 }
@@ -194,4 +219,50 @@ void computerHardMove(void)
 	{
         computerEasyMove();
     }
+}
+unsigned char winMove(void)
+{
+	char temp;
+	//win if possible
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            if (field[i][j] != 'X' && field[i][j] != 'O')
+            {
+                temp = field[i][j];
+                field[i][j] = 'O';
+                if ('O' == winnerChar())
+                {
+                    return 1;
+                }
+                field[i][j] = temp;
+            }
+        }
+    }
+	
+	return 0;
+}
+unsigned char blockMove(void)
+{
+	char temp;
+	//block if possible
+	for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            if (field[i][j] != 'X' && field[i][j] != 'O')
+            {
+                temp = field[i][j];
+                field[i][j] = 'X';
+                if ('X' == winnerChar())
+                {
+                    field[i][j] = 'O';
+                    return 1;
+                }
+                field[i][j] = temp;
+            }
+        }
+    }
+	return 0;
 }

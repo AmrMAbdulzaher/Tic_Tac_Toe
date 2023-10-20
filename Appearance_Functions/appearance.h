@@ -21,27 +21,28 @@
 #define _reset_ "\033[0m"
 #define _bold_ "\e[1m"
 
-#define programDscrp "Hello this is XO GAME."
 #define dscrpTextTime 20000
 #define devName "Amr Mohamed Abdulzaher"
 #define devEmail "amrnassareng@gmail.com"
-#define devLinkedin "www.linkedin.com/in/amrnassareng"
-#define devGitHub "www.github.com/AmrMAbdulzaher"
+#define devLinkedin "linkedin.com/in/amrnassareng"
+#define devGitHub "github.com/AmrMAbdulzaher"
 #define devTextTime 30000
-
 #define CLEAR "clear || cls"
-#define printLine() printf("=================================\n")
+#define printLine() printf("\t\t\t\t\t     ======================================\n")
+#define shiftTextLeft() printf("\t\t\t\t\t     ")
 
 void drawFreePalestine(void);
-void printMainMenu(void);
-void printModeMenu(void);
-void printAboutMenu(void);
+void showMainMenu(void);
+void showModeMenu(void);
+void showAboutMenu(void);
 void printDeveloper(void);
 void printDescription(void);
 void pressEnter(void);
 void showField(void);
-void printSPMenu(void);
+void showSPMenu(void);
 void printTitle(const char* text);
 void printAnimatedText(const char* text,const unsigned int time_ms);
+void showWhatNext(void);
+void showExitMenu(void);
 
 #endif
