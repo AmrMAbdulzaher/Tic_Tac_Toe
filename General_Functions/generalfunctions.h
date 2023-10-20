@@ -20,4 +20,5 @@ unsigned char userTurnInput(void);
 unsigned char getGameStat(void);
 void aboutMenu(void);
 void exitGame(void);
+void resetGameStat(void);
 #endif

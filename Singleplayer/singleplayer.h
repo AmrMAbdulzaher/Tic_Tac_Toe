@@ -11,4 +11,5 @@ void computerNormalMove(void);
 void computerHardMove(void);
 unsigned char winMove(void);
 unsigned char blockMove(void);
+
 #endif

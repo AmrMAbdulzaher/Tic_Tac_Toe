@@ -1,3 +1,14 @@
+/**
+ * @file generalfunctions.c
+ * @brief General utility functions for the Tic-Tac-Toe game.
+ * 
+ * This file contains functions that provide general utility and game logic for the
+ * Tic-Tac-Toe game, including handling player input, game state, and checking for a winner.
+ * 
+ * @author Amr Mohamed Abdulzaher (amrnassareng@gmail.com)
+ * @date 21-10-2023
+ */
+
 #include "generalfunctions.h"
 #include "../Appearance_Functions/appearance.h"
 #include "../Singleplayer/singleplayer.h"
@@ -18,6 +29,9 @@ char playerO[21]="Computer";
 char turnName[21];
 char titleText[33];
 
+/**
+ * @brief Display the welcome screen with a title and press Enter prompt.
+ */
 void welcomeScreen(void)
 {
 	system(CLEAR);
@@ -25,9 +39,14 @@ void welcomeScreen(void)
 	pressEnter();
 	mainMenu();
 }
+/**
+ * @brief Toggle the player's choice between 'X' and 'O'.
+ */
 void switchChoice(void)
 {
+	//switch turn character
 	choice = (choice == 'X') ? 'O' : 'X';
+	//swtich the turn name
 	if(strcmp(playerX,turnName) == 0)
 	{
 		strcpy(turnName,playerO);
@@ -37,6 +56,9 @@ void switchChoice(void)
 		strcpy(turnName,playerX);
 	}
 }
+/**
+ * @brief Display the main menu and handle user input.
+ */
 void mainMenu(void)
 {
 	char input;
@@ -54,6 +76,9 @@ void mainMenu(void)
 		}
 	}
 }
+/**
+ * @brief Display the mode selection menu and handle user input.
+ */
 void chooseMode(void)
 {
 	char input;
@@ -84,6 +109,9 @@ void chooseMode(void)
 		}
 	}
 }
+/**
+ * @brief Display the about menu and handle user input.
+ */
 void aboutMenu(void)
 {
 	char input;
@@ -96,12 +124,19 @@ void aboutMenu(void)
 		switch(input)
 		{
 			case 1: printDescription(); break;
-			case 2: printDeveloper(); break;
-			case 3: return;
-			case 4: exitGame();
+			case 2: printSPDescription(); break;
+			case 3: printMPDescription(); break;
+			case 4: printDeveloper(); break;
+			case 5: return;
+			case 6: exitGame();
 		}
 	}
 }
+/**
+ * @brief Handle user input for the player's turn and update the game state.
+ *
+ * @return 1 if the user's input is valid, 0 otherwise.
+ */
 unsigned char userTurnInput(void)
 {
 	char position;
@@ -127,9 +162,7 @@ unsigned char userTurnInput(void)
 		}
 		else if(1 == scanReturn && 0 == position)
 		{
-			resetField();
-			strcpy(playerX,"You");
-			strcpy(playerO,"Computer");
+			resetGameStat();
 			state=0;
 			break;
 		}
@@ -144,7 +177,11 @@ unsigned char userTurnInput(void)
 	}
 	return state;
 }
-
+/**
+ * @brief Get the game state to check for a winner or a draw.
+ *
+ * @return 0 if the game is not over, 1 if there's a winner, 2 if it's a draw.
+ */
 unsigned char getGameStat(void)
 {
 	unsigned char state=0;
@@ -166,9 +203,7 @@ unsigned char getGameStat(void)
 			else if(2==input)
 			{
 				state=2;
-				playerXCounter=0;
-				playerOCounter=0;
-				resetField();
+				resetGameStat();
 				break;
 			}
 			else if(3==input)
@@ -179,11 +214,18 @@ unsigned char getGameStat(void)
 	}
 	return state;
 }
+/**
+ * @brief Reset the game field and play counter to start a new game.
+ */
 void resetField(void)
 {
+	//reset play counter
 	playCounter=0;
+	//reset the turn character
 	choice='X';
+	//reset the turn name
 	strcpy(turnName,playerX);
+	//reset the positions
 	char num='1';
 	int i, j;
 	for (i = 0; i < 3; i++)
@@ -195,6 +237,22 @@ void resetField(void)
 		}
 	}
 }
+/**
+ * @brief Reset the game ,including the field, player names, and players counters.
+ */
+void resetGameStat(void)
+{
+	resetField();
+	strcpy(playerX,"You");
+	strcpy(playerO,"Computer");
+	playerXCounter=0;
+	playerOCounter=0;
+}
+/**
+ * @brief Check if the game has ended due to a winner or a draw.
+ *
+ * @return 1 if the game has ended, 0 otherwise.
+ */
 unsigned char isEnd(void)
 {
 	char winner=winnerChar();
@@ -204,7 +262,7 @@ unsigned char isEnd(void)
 		playerXCounter++;
 		showField();
 		textGreen_B();
-		printf("\t\t\t\t\t\t           %s %s the winner.\n",playerX,strcmp(playerX,"You")==0?"are":"is");
+		printf("\t\t\t\t\t\t     %s %s the winner.\n",playerX,strcmp(playerX,"You")==0?"are":"is");
 		textReset();
 		printLine();
 		pressEnter();
@@ -214,7 +272,7 @@ unsigned char isEnd(void)
 		playerOCounter++;
 		showField();
 		strcmp(playerX,"Computer")==0?textRed_B():textGreen_B();
-		printf("\t\t\t\t\t\t           %s is the winner.\n",playerO);
+		printf("\t\t\t\t\t\t     %s is the winner.\n",playerO);
 		textReset();
 		printLine();
 		pressEnter();
@@ -235,6 +293,11 @@ unsigned char isEnd(void)
 	
 	return isEndState;
 }
+/**
+ * @brief Get the character of the winner ('X', 'O', or 'F' for no winner).
+ *
+ * @return The winning character ('X', 'O', or 'F').
+ */
 char winnerChar(void)
 {	
 	if(!isWinRows())
@@ -249,6 +312,11 @@ char winnerChar(void)
 	}
 	return winnerCharacter;
 }
+/**
+ * @brief Check if there's a win in any of the rows.
+ *
+ * @return 1 if there's a win in the rows, 0 otherwise.
+ */
 unsigned char isWinRows(void)
 {
 	unsigned char isWinState=0;
@@ -262,6 +330,11 @@ unsigned char isWinRows(void)
 	}
 	return isWinState;
 }
+/**
+ * @brief Check if there's a win in any of the columns.
+ *
+ * @return 1 if there's a win in the columns, 0 otherwise.
+ */
 unsigned char isWinCols(void)
 {
 	unsigned char isWinState=0;
@@ -272,6 +345,11 @@ unsigned char isWinCols(void)
     }
 	return isWinState;
 }
+/**
+ * @brief Check if there's a win in any of the diagonals.
+ *
+ * @return 1 if there's a win in the diagonals, 0 otherwise.
+ */
 unsigned char isWinDiags(void)
 {
 	unsigned char isWinState=0;
@@ -285,6 +363,9 @@ unsigned char isWinDiags(void)
 	}
 	return isWinState;
 }
+/**
+ * @brief Exit the game with a confirmation prompt.
+ */
 void exitGame(void)
 {
 	char input=0;
